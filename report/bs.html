@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BS_report</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><h2 id="bs软件体系结构实验报告"><strong>BS软件体系结构实验报告</strong></h2>
+
+
+
+<h3 id="一-概述">一 概述</h3>
+
+<p>首先是关于本报告的说明,为了能够更好的演示程序效果,我在报告中加入了一些录制的程序演示的gif动图,因此为了查看演示效果,推荐看打包文件夹下的html格式的报告““.</p>
+
+<p>在打包的文件夹内附有所有代码的文档.</p>
+
+<p>程序的使用手册见代码文件夹的<code>readme.md</code>文件.</p>
+
+<p>本次课程的大程我选择了题目<code>assignment 2</code>,也就是html5 网页对战游戏的开发.</p>
+
+<p>本次大程我选择的工具和开发技术栈是:</p>
+
+<blockquote>
+  <p>后端平台 : Node.js Mongodb express <br>
+  前端平台 : HTML5 Canvas CoffeeScript <br>
+  工具：socket.io bootstrap sweetalert JQuery</p>
+</blockquote>
+
+<p>本次大程主要实现了: <br>
+1. 利用HTML5技术,不借助任何现有的游戏引擎进行开发 <br>
+2. 多玩家在线飞机对战游戏 <br>
+3. 注册,登录机制 <br>
+4. 提供查询游戏排行榜的功能</p>
+
+<p>下面是简单的游戏界面的几个展示截图:</p>
+
+<p><strong>登录/注册截面</strong></p>
+
+<p><img src="http://r.loli.io/Mz6Zzm.png" alt="enter image description here" title=""></p>
+
+<p><strong>游戏画面截图</strong></p>
+
+<p><img src="http://r.loli.io/QNBZVr.png" alt="enter image description here" title=""></p>
+
+<p><strong>游戏结果截图</strong></p>
+
+<p><img src="http://r.loli.io/nYBFr2.png" alt="enter image description here" title=""></p>
+
+<p><strong>排行榜截图</strong></p>
+
+<p><img src="http://r.loli.io/VjiEn2.png" alt="enter image description here" title=""></p>
+
+<h3 id="二-前端开发">二 前端开发</h3>
+
+<p>在前端我选择用html5的Canvas技术来进行游戏场景的绘制,采用面向对象设计模式进行开发.</p>
+
+<p>主要的设计如下所示.</p>
+
+
+
+<h3 id="21-maincoffee模块">2.1 main.coffee模块</h3>
+
+<p>本模块主要完成游戏app的各种初始化工作,设置各种键盘和鼠标监听事件的注册,然后进行游戏最上层运行的逻辑控制.</p>
+
+<p><img src="http://r.loli.io/y2yU7r.png" alt="enter image description here" title=""></p>
+
+
+
+<h3 id="22-appcoffee模块">2.2 App.coffee模块</h3>
+
+<p>本模块是游戏前端的核心模块.</p>
+
+<p>主要完成游戏场景的创建和初始化,canvas的设置,各个游戏元素的布置,设置与服务器通信的socket模块等等.</p>
+
+<p><img src="http://r.loli.io/nIje2q.gif" alt="enter image description here" title=""></p>
+
+
+
+<h3 id="23-playercoffee模块">2.3 Player.coffee模块</h3>
+
+<p>本模块负责与游戏玩家相关的操作.</p>
+
+<p>主要包括维护游戏玩家在世界中的位置,玩家射出的有效范围内的子弹,并且包括了玩家状态的更新和绘制等方法.</p>
+
+<p><img src="http://r.loli.io/YjI3Eb.gif" alt="enter image description here" title=""></p>
+
+
+
+<h3 id="24-socketcoffee模块">2.4 Socket.coffee模块</h3>
+
+<p>本模块负责客户端与服务器之间的通信工作,利用<code>socket.io</code>开进行消息的传递.</p>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs "><span class="hljs-function"><span class="hljs-title">update_scene_single_user</span>=<span class="hljs-params">(data)</span>=&gt;</span>
+    <span class="hljs-comment">###
+      update a single user's state in game scene
+    ###</span></code></pre>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs "><span class="hljs-function"><span class="hljs-title">update_scene_users</span>=<span class="hljs-params">(data)</span>=&gt;</span>
+    <span class="hljs-comment">###
+      update all users' states in game scene
+    ###</span></code></pre>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs ">socket.<span class="hljs-literal">on</span><span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'welcome'</span>,((user_data)-&gt;
+    ###
+      Actions <span class="hljs-keyword">for</span> the acknowledged message from server
+    ###</span></span></code></pre>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs ">socket.<span class="hljs-literal">on</span><span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'player_join'</span>,((data)-&gt;
+    ###
+      Actions <span class="hljs-keyword">for</span> <span class="hljs-keyword">new</span> player joining the game
+    ###</span></span></code></pre>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs ">socket.<span class="hljs-literal">on</span><span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'player_leave'</span>,((data)-&gt;
+    ###
+      Actions <span class="hljs-keyword">for</span> player leaving the game
+    ###</span></span></code></pre>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs ">socket.<span class="hljs-literal">on</span><span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'sync_enemies'</span>,((enemies_data)-&gt;
+    ###
+      Syncronize the data <span class="hljs-reserved">with</span> server
+    ###</span></span></code></pre>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs ">socket.<span class="hljs-literal">on</span><span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'update_users'</span>,((data)-&gt;    
+    ###
+      Update players<span class="hljs-string">' score and health data
+    ###</span></span></span></code></pre>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs ">socket.<span class="hljs-literal">on</span><span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'death'</span>,((data)-&gt;
+    ###
+      Actions <span class="hljs-keyword">for</span> the user losing the game
+    ###</span></span></code></pre>
+
+
+
+<h3 id="25-scenecoffee模块">2.5 Scene.coffee模块</h3>
+
+<p>本模块主要用来管理游戏场景的相关属性,没有具体的属性方法</p>
+
+
+
+<h3 id="26-rockcoffee模块">2.6 Rock.coffee模块</h3>
+
+<p>本模块主要负责游戏场景中星星的显示效果,逻辑较为简单.</p>
+
+<p>在场景中初始化的星星不断的随着camera的移动而进行移动,移出视野范围内的星星则从相反的方向移入</p>
+
+
+
+<h3 id="27-enemycoffee模块">2.7 Enemy.coffee模块</h3>
+
+<p>本模块主要负责与玩家相对的敌方玩家的属性,同样有<code>draw</code>方法来负责场景中的绘制工作.</p>
+
+
+
+<h3 id="28-cameracoffee模块">2.8 Camera.coffee模块</h3>
+
+<p>本模块主要负责摄像头的移动和属性更新,并且提供了一组用来进行场景中物体坐标变换的接口.</p>
+
+<p><img src="http://r.loli.io/uQNryi.gif" alt="enter image description here" title=""></p>
+
+
+
+<h3 id="29-bulletpoolcoffee模块">2.9 BulletPool.coffee模块</h3>
+
+<p><code>BulletPool</code>一般用作<code>Player</code>的成员,负责管理玩家的子弹,同事为了性能上的考虑,预先给每个player申请好50个子弹的buffer,然后利用双端队列的机制来循环利用buffer的内存资源</p>
+
+
+
+<h3 id="210-bulletcoffee模块">2.10 Bullet.coffee模块</h3>
+
+<p>本模块主要负责与子弹相关的属性,如位置,方向等,并且提供了<code>draw</code>方法来完成子弹在场景中的绘制工作.</p>
+
+
+
+<h3 id="211-healthbarcoffee模块">2.11 HealthBar.coffee模块</h3>
+
+<p>本模块负责游戏场景中玩家血量的显示</p>
+
+
+
+<h3 id="212-keyscoffee模块">2.12 Keys.coffee模块</h3>
+
+<p>本模块负责用户键盘输入的设置</p>
+
+
+
+<h3 id="213-imagerepocoffee">2.13 ImageRepo.coffee</h3>
+
+<p>本模块负责统一管理游戏元素的图片资源</p>
+
+
+
+<h3 id="三-后端开发">三 后端开发</h3>
+
+<p>本设计中后端主要包括MVC框架,数据库设计和与客户端交互三方面</p>
+
+
+
+<h3 id="31-mvc">3.1 MVC</h3>
+
+<p>本设计的开发是基于<code>express</code>框架, <code>express</code>提供了简洁和实用的路由管理,资源管理,control等等.</p>
+
+<p>后端利用了express的<code>session</code>中间件来做用户的认证工作,包括用户的注册,登录,登出,权限控制等等.</p>
+
+<p>视图定义在<code>views</code>文件夹内,包括登录用的视图,游戏视图和排行榜视图等</p>
+
+<p>路由控制在文件<code>server.coffee</code>文件中定义</p>
+
+<p>模型选择了<code>mongoose</code>工具,主要定义了用户相关属性的Schema</p>
+
+
+
+<h3 id="32-数据库设计">3.2 数据库设计</h3>
+
+<p>由于本设计在数据库存储方面的需求比较简单,因此数据库视图的定义也比较简单,在<code>models</code>下的<code>user.coffee</code>文件中定义.</p>
+
+
+
+<pre class="prettyprint"><code class="language-coffeescript hljs ">mongoose=<span class="hljs-built_in">require</span>(<span class="hljs-string">'mongoose'</span>)
+Schema=mongoose.Schema
+
+
+UserSchema=<span class="hljs-keyword">new</span> Schema({
+  <span class="hljs-attribute">id</span>: String
+  <span class="hljs-attribute">name</span>: String
+  <span class="hljs-attribute">maxscore</span>: double
+  <span class="hljs-attribute">passwordHash</span>: String
+  <span class="hljs-attribute">passwordSalt</span>: String
+})
+
+<span class="hljs-built_in">module</span>.<span class="hljs-built_in">exports</span>=mongoose.model(<span class="hljs-string">'User'</span>,UserSchema)</code></pre>
+
+
+
+<h3 id="33-游戏控制">3.3 游戏控制</h3>
+
+<p>在服务器后端需要计算各个玩家之间的碰撞和攻击情况,然后更新各个玩家的得分和血量,然后推送到各个客户端中去.</p>
+
+
+
+<h4 id="331-碰撞检测">3.3.1 碰撞检测</h4>
+
+<p>这一部分主要是检测玩家和子弹之间的几何关系,判断是否命中,如果命中更新双方的得分和血量.</p>
+
+<p>我采用的基本算法是把每个玩家当做一个矩形,然后根据它的位置和旋转角度,转化为判断一个点是否在矩形内的计算几何问题,然后利用叉积计算判断该点与矩形的四条边之间的位置关系来完成</p>
+
+
+
+<h4 id="332-敌方飞机控制">3.3.2 敌方飞机控制</h4>
+
+<p>服务器需要控制敌方飞机的行为,我选择的是比较简单的攻击策略,就是每个敌方飞机都选择与它距离最近的玩家飞机进行攻击</p>
+
+
+
+<h4 id="333-与客户端之间通信">3.3.3 与客户端之间通信</h4>
+
+<p>因为本功能属于比较重要和核心的功能,因此详见第四节.</p>
+
+
+
+<h3 id="四-客户端-服务器通信设计">四 客户端-服务器通信设计</h3>
+
+<p>在本设计中,客户端与服务器之间通信的总览架构是(图片来自知名网络游戏<code>agar</code>的github wiki,与本设计的通信架构十分相似)</p>
+
+<p><img src="https://camo.githubusercontent.com/b83247a4f6962607dc9d8c23c3404785ffe03724/687474703a2f2f692e696d6775722e636f6d2f5a7735363152562e706e67" alt="enter image description here" title=""></p>
+
+<p>客户端与服务器建立连接的过程如下所示</p>
+
+<p><img src="https://camo.githubusercontent.com/8f5cccdd016acdae5d59a1dc2ccb799eb70bbe59/687474703a2f2f692e696d6775722e636f6d2f713057574978742e706e67" alt="enter image description here" title=""></p>
+
+<p>在游戏过程中,双方进行通信的过程如下所示</p>
+
+<p><img src="https://camo.githubusercontent.com/3d14b97e8a18ff3b362be38910fd53a969b2bcaa/687474703a2f2f692e696d6775722e636f6d2f58554d6d3945432e706e67" alt="enter image description here" title=""></p>
+
+
+
+<h3 id="五-程序演示">五 程序演示</h3>
+
+<p>下面的演示都是<code>gif</code>动图,推荐在打包上传的文件夹中html格式的报告中进行查看.</p>
+
+<p><strong>用户的注册</strong></p>
+
+<p>注册新用户时,为了方便直接输入用户名和密码,然后点击按钮就可以注册了.注册后需要重新登录才可以进入游戏</p>
+
+<p><img src="http://r.loli.io/jQzmmq.gif" alt="enter image description here" title=""></p>
+
+<p><strong>用户的登录</strong></p>
+
+<p>在注册之后,输入相应的用户名何密码就可以直接登录开始游戏</p>
+
+<p><img src="http://r.loli.io/2AvAZn.gif" alt="enter image description here" title=""></p>
+
+<p><strong>游戏演示</strong></p>
+
+<p>可以从下面的演示当中看到血量,分数等的变化</p>
+
+<p><img src="http://r.loli.io/Nfuqiy.gif" alt="enter image description here" title=""></p>
+
+<p><strong>游戏结束效果</strong></p>
+
+<p>为了演示方便,下面的演示中我特意加快了死亡的速度</p>
+
+<p>可以看到玩家在死亡后可以选择重新进行游戏</p>
+
+<p><img src="http://r.loli.io/miIfaa.gif" alt="enter image description here" title=""></p>
+
+<p>可以看到玩家在死亡后可以选择查看排名</p>
+
+<p><img src="http://r.loli.io/e6FrYv.gif" alt="enter image description here" title=""></p>
+
+<h3 id="六-开发体会与小结">六 开发体会与小结</h3>
+
+<p>本次一个人完成BS大程,感觉确实收货了很多,从前端到后端的很多细节都第一次有了实践的经历,同时也体会何研究了一些现在比较流行的开发技术,感觉收货很大.</p>
+
+<p>在完成了基本的要求的基础上,本设计应该可以做的更好,比如有时间的话可以加入玩家之间聊天的功能,以及可以在后端提供除了查看排行榜之外更多的服务功能.</p></div></body>
+</html>
